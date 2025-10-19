@@ -6,8 +6,10 @@ const cocktailSearchUrl =
   'https://www.thecocktaildb.com/api/json/v1/1/search.php?s='
 
 import { useQuery } from '@tanstack/react-query'
+import { useGlobalContext } from '../components/context'
+import { useEffect } from 'react'
 
-const searchCocktailsQuery = (searchTerm) => {
+export const searchCocktailsQuery = (searchTerm) => {
   return {
     queryKey: ['search', searchTerm || 'cocktail'],
     queryFn: async () => {
@@ -30,6 +32,12 @@ export const loader =
   }
 const Landing = () => {
   const { searchTerm } = useLoaderData()
+  const { setSearchTerm } = useGlobalContext()
+
+  useEffect(() => {
+    setSearchTerm(searchTerm)
+  }, [searchTerm, setSearchTerm])
+
   const { data: drinks } = useQuery(searchCocktailsQuery(searchTerm))
 
   return (

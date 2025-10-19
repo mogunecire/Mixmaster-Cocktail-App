@@ -4,6 +4,8 @@ import Wrapper from '../assets/wrappers/CocktailPage'
 const singleCocktailUrl =
   'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i='
 import { useQuery } from '@tanstack/react-query'
+import { useGlobalContext } from '../components/context'
+import { searchCocktailsQuery } from './Landing'
 
 const singleCocktailQuery = (id) => {
   return {
@@ -26,6 +28,9 @@ const Cocktail = () => {
   const { id } = useLoaderData()
   const { data } = useQuery(singleCocktailQuery(id))
 
+  const { searchTerm } = useGlobalContext()
+  const query = searchCocktailsQuery(searchTerm)
+
   if (!data) return <Navigate to="/" />
   const singleDrink = data.drinks[0]
   const {
@@ -43,13 +48,12 @@ const Cocktail = () => {
       // if (/^strIngredient\d+$/.test(key)) return item
     })
     .map(([_, value]) => value)
-  console.log(ingredients)
 
   return (
     <Wrapper>
       <header>
-        <Link to="/" className="btn">
-          back home
+        <Link to={`/?search=${query.queryKey[1]}`} className="btn">
+          go back
         </Link>
         <h3>{name}</h3>
       </header>
